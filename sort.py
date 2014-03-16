@@ -24,6 +24,19 @@ class Foo:
             while j>0 and self.code[j-1] > self.code[j]:
                 self.code[j-1],self.code[j]=self.code[j],self.code[j-1]
                 j = j-1
+    def select(self):
+        """ worst: O(n^2), best: O(n^2), avg: O(n^2) """
+        a = self.code
+        k = len(a)
+        #for i in range(k):
+        for i in range(k-1):    #skil last one
+            min = i
+            for j in range(i,k):
+                if a[j] < a[min]:
+                    min = j
+            if min != i:
+                a[i],a[min] = a[min],a[i]
+            #print i,a
     def __merge(self, left, right):
         if left == None: l=0
         else: l=len(left)
@@ -95,9 +108,13 @@ def main():
     #print ('orig: '+str(a.get()))
     #a.merge()
     #print ('sort: '+str(a.get()))
+    #a.reset()
+    #print ('orig: '+str(a.get()))
+    #a.quick()
+    #print ('sort: '+str(a.get()))
     a.reset()
     print ('orig: '+str(a.get()))
-    a.quick()
+    a.select()
     print ('sort: '+str(a.get()))
 if __name__ == '__main__':
     main()
