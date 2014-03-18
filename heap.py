@@ -1,14 +1,21 @@
 #!/usr/bin/python
 import sys
+import math
 import random
 
 class Foo:
     """ Foo test module """
     name = 'Foo test module'
-    def __init__(self):
+    size = 10
+    step = 0
+    bigo = 0
+    def __init__(self, sz=None):
+        if (sz != None): self.size = sz
         Foo.reset(self)
     def reset(self):
-        self.code = random.sample(xrange(100), 10)
+        self.code = random.sample(xrange(self.size*10), self.size)
+        self.step = 0
+        self.bigo = self.size * math.log(self.size,2)
     def get(self):
         return self.code
     def bubble(self):
@@ -37,21 +44,28 @@ class Foo:
                 root = child
             else:
                 break
-    def heap(self):
-        a = self.code
+            self.step += 1
+    def heap(self, a=None):
+        if a == None: a = self.code
         for start in range((len(a)-2)/2,-1,-1):
             self.__sift_down(a,start,len(a)-1)
-            print ('s'+str(start)+':   '+str(a))
+            #print ('s'+str(start)+':   '+str(a))
         for end in range(len(a)-1,0,-1):
             a[0],a[end] = a[end],a[0]
             self.__sift_down(a,0,end-1)
-            print ('e'+str(end)+':   '+str(a))
+            #print ('e'+str(end)+':   '+str(a))
 def main():
     sys.setrecursionlimit(1000)
-    a=Foo()
-    print ('orig: '+str(a.get()))
+    if len(sys.argv) > 1:
+        a = Foo(int(sys.argv[1]))
+    else:
+        a=Foo()
+    #print ('orig: '+str(a.get()))
     #a.bubble()
-    a.heap()
-    print ('sort: '+str(a.get()))
+    a.heap(a.get())
+    #print ('sort: '+str(a.get()))
+    print ('step: '+str(a.step)+' bigo: '+str(a.bigo))
 if __name__ == '__main__':
+    #print len(sys.argv)
+    #print sys.argv
     main()
