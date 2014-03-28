@@ -29,7 +29,7 @@ class Foo:
         a = self.code
         k = len(a)
         #for i in range(k):
-        for i in range(k-1):    #skil last one
+        for i in range(k-1):    #skip last one
             min = i
             for j in range(i,k):
                 if a[j] < a[min]:
