@@ -76,6 +76,7 @@ class Foo:
         right = self.__merge_sort(right)
         return self.__merge(left,right)
     def merge(self):
+        """ worst: O(nlogn), best: O(nlogn), avg: O(nlogn) """
         self.code = self.__merge_sort(self.code)
     def __quicksort(self, a, left, right):
         key = a[right]
@@ -92,6 +93,7 @@ class Foo:
         self.__quicksort(a, rid, right)
         print(self.code,lid,rid)
     def quick(self):
+        """ worst: O(n^2), best: O(nlogn), avg: O(nlogn) """
         l = len(self.code)
         self.__quicksort(self.code, 0, l-1)
 def main():
