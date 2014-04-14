@@ -221,6 +221,38 @@ void rgb_convert_hp(unsigned short *src, unsigned int *dst, unsigned int pxs, un
         );
 }
 
+void rgb_convert_hp_128(unsigned short *src, unsigned int *dst, unsigned int pxs, unsigned pld)
+{
+        __asm__ volatile (
+                "       cmp          %[s], #0\r\n"
+                "       beq          2f\r\n"
+                "       vmov.i32     d21, #0\r\n"
+                "       vmov.i32     d27, #0\r\n"
+                "1:     vldmia       %[i]!, {q8}\r\n"
+                "       vldmia       %[i]!, {q11}\r\n"
+                "       pld          [%[i], #128]\r\n"
+                "       vshr.u8      q9, q8, #3\r\n"
+                "       vshr.u8      q12, q11, #3\r\n"
+                "       vshrn.i16    d20, q9, #5\r\n"
+                "       vshrn.i16    d26, q12, #5\r\n"
+                "       vshrn.i16    d19, q8, #5\r\n"
+                "       vshrn.i16    d25, q11, #5\r\n"
+                "       vshl.i8      d19, d19, #2\r\n"
+                "       vshl.i8      d25, d25, #2\r\n"
+                "       vshl.i16     q8, q8, #3\r\n"
+                "       vshl.i16     q11, q11, #3\r\n"
+                "       vmovn.i16    d18, q8\r\n"
+                "       vmovn.i16    d24, q11\r\n"
+                "       vst4.8       {d18, d19, d20, d21}, [%[o]]!\r\n"
+                "       vst4.8       {d24, d25, d26, d27}, [%[o]]!\r\n"
+                "       subs         %[s], %[s], #16\r\n"
+                "       bne          1b\r\n"
+                "2:\r\n"
+        :: [i] "r" (src), [o] "r" (dst), [s] "r" (pxs)
+        );
+}
+
+typedef void (*func_t)(unsigned short *, unsigned int *, unsigned int, unsigned int);
 typedef void (*func_t)(unsigned short *, unsigned int *, unsigned int, unsigned int);
 
 int main(int argc, char **argv)
@@ -232,6 +264,10 @@ int main(int argc, char **argv)
         func_t rgb565to888 = rgb_convert_hp;
 
         if (argc > 1) {
+            if (argv[1][0]=='0') {
+                printf("model: rgb_convert_hp_128\n\r");
+                rgb565to888 = rgb_convert_hp_128;
+            }
             if (argv[1][0]=='1') {
                 printf("model: rgb_convert_yt_ca9\n\r");
                 rgb565to888 = rgb_convert_yt_ca9;
