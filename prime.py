@@ -21,17 +21,11 @@ def isPrime2(n):
 def main():
     N = int(sys.argv[1]) # number of primes wanted (from command-line)
     M = 100              # upper-bound of search space
-    l = list()           # result list
-    while len(l) < N:
-        l += filter(isPrime, range(M - 100, M)) # append prime element of [M - 100, M] to l
-        #l += filter(isPrime2, range(M - 100, M))
+    L = list()           # result list
+    while len(L) < N:
+        L += filter(isPrime, range(M - 100, M)) # append prime element of [M - 100, M] to l
         M += 100                                # increment upper-bound
-    print l[:N] # print result list limited to N elements
-
-    while len(l) < N:
-        l += filter(isPrime2, range(M - 100, M))
-        M += 100                                # increment upper-bound
-    print l[:N] # print result list limited to N elements
+    print L[:N] # print result list limited to N elements
 
 if __name__ == '__main__':
     main()
