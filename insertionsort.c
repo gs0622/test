@@ -30,6 +30,7 @@ static void print_array(int *p, int n)
 }
 
 /* insertion sort, a.k.a. selection sort, p == array, n = size
+ * reference: http://en.wikipedia.org/wiki/Insertion_sort
  */
 void insertionsort(int *p, int n)
 {
@@ -61,4 +62,3 @@ int main(int argc, char **argv)
 	print_array(p, n);
 	return 0;
 }
-
