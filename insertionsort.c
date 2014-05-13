@@ -39,7 +39,7 @@ void insertionsort(int *p, int n)
     for (i=1;p && i<n;i++) {
         j=i;
         while (j && p[j-1]>p[j]) /*ascending order*/
-            swap(&p[j-1], &p[j]), j-=1; /*slightly faster then swap version*/
+            swap(&p[j-1], &p[j]), j-=1; /*O(1) space complexity in swap*/
 #else
 	int i, j, key;
     for (i=1;p && i<n;i++) {
