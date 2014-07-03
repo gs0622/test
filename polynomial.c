@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 typedef struct node {
-    float coef;
+    int coef;
     int exp;
     struct node *next;
 } polynomial;
@@ -42,9 +42,9 @@ void printall(struct node *head)
         struct node *cur = head;
         while (cur) {
             if (cur == head)
-                printf("%fx^%d", cur->coef, cur->exp);
+                printf("%dx^%d", cur->coef, cur->exp);
             else 
-                printf(" + %fx^%d", cur->coef, cur->exp);
+                printf(" + %dx^%d", cur->coef, cur->exp);
             cur = cur->next;
         }
         printf("\n");
