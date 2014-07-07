@@ -1,3 +1,4 @@
+/*Mark Adler's checksum algorithm*/
 #include <stdio.h>
 #include <string.h>
 unsigned int hash(const void *buf, size_t buflength) {
