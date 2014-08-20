@@ -1,16 +1,25 @@
 #include <stdio.h>
 #include <time.h>
+#include <limits.h>
+
+double get_time(void)
+{
+    struct timespec ts;
+    double now;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    now = ts.tv_sec + (double)ts.tv_nsec/1000000000L;
+    return now;
+}
 
 int main(void)
 {
-	clock_t c;
-        unsigned int i;
-        printf("csz=%ld cps=%ld\n", sizeof(c), CLOCKS_PER_SEC);
-	while (1) {
-		c=clock();
-		printf("%lu\n", (unsigned long)c/CLOCKS_PER_SEC);
-		//sleep(1);
-                for (i=0x0fffffff; i>0; i--);
-	}
-	return 0;
+    double t;
+    t = get_time();
+    printf("%f\n", t);
+    printf("%.10f\n", t);
+    sleep(1);
+    t = get_time();
+    printf("%f\n", t);
+    printf("%.10f\n", t);
+
 }
