@@ -11,12 +11,23 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
+
+/*need -lrt*/
+double get_time(void)
+{
+    struct timespec ts;
+    double now;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    now = ts.tv_sec + (double)ts.tv_nsec/1000000000L;
+    return now;
+}
 
 int main(int argc, char *argv[])
 {
     int pipefd[2];
     pid_t cpid;
-    char buf;
+    double buf;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <string>\n", argv[0]);
@@ -36,16 +47,15 @@ int main(int argc, char *argv[])
 
     if (cpid == 0) {            /* Child reads from pipe */
         close(pipefd[1]);       /* Close unused write end */
-        while (read(pipefd[0], &buf, 1) > 0)
-            write(STDOUT_FILENO, &buf, 1);
-
-        write(STDOUT_FILENO, "\n", 1);
+        read(pipefd[0], &buf, sizeof(buf));
+        printf("%.10f\n", get_time() - buf);
         close(pipefd[0]);
         _exit(EXIT_SUCCESS);
 
     } else {                    /* Parent writes argv[1] to pipe */
         close(pipefd[0]);       /* Close unused read end */
-        write(pipefd[1], argv[1], strlen(argv[1]));
+        buf = get_time();
+        write(pipefd[1], &buf, sizeof(buf));
         close(pipefd[1]);       /* Reader will see EOF */
         wait(NULL);             /* Wait for child */
         exit(EXIT_SUCCESS);
