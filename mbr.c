@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     mbr_t mbr;
     if (1 == argc) return 0;
     printf("fi=%s\n", argv[1]);
-    fd = open(argv[1], 'r');
+    fd = open(argv[1], O_RDONLY);
     printf("fd=%d\n", fd);
     nread = read(fd, &mbr, sizeof(mbr));
     printf("nread=%d\n", nread);
