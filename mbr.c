@@ -6,10 +6,10 @@
 #include <unistd.h>
 
 typedef struct {
-    char code[440];
-    char ignore[6];
-    char partation[4][16];
-    char signature[2];
+    unsigned char code[440];
+    unsigned char dsig[6];
+    unsigned char part[4][16];
+    unsigned char bsig[2];
 } mbr_t;
 
 int main(int argc, char *argv[])
@@ -21,7 +21,11 @@ int main(int argc, char *argv[])
     fd = open(argv[1], O_RDONLY);
     printf("fd=%d\n", fd);
     nread = read(fd, &mbr, sizeof(mbr));
-    printf("nread=%d\n", nread);
+    //printf("nread=%d\n", nread);
+    printf("disk_sig=%1x%1x%1x%1x%1x%1x\n",
+        mbr.dsig[0], mbr.dsig[1], mbr.dsig[2],
+        mbr.dsig[3], mbr.dsig[4], mbr.dsig[5]);
+    printf("boot_sig=%1x%1x\n", mbr.bsig[0], mbr.bsig[1]);
     if (fd > 0) close(fd);
     return 0;
 }
