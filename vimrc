@@ -1,8 +1,8 @@
 set nu
-set ts=4
+set ts=2
 set expandtab
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
-set list
+"set list
 
 if has("cscope")
     if filereadable("cscope.out")
