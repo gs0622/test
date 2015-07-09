@@ -3,31 +3,36 @@ import subprocess
 cmd = ['adb', 'shell', '/data/local/micro_bench_static',
 	'--no_print_each_iter', '--print_average', 'memcpy', '', '10']
 
-def memcpy_test(x):
-	cmd[6] = str(pow(2, x))
-	#print cmd
-	subprocess.call(cmd)
+def test_size(exponent, offset=0):
+	return str(pow(2, exponent) + offset)
+
+def test_memcpy(x, y=0):
+	cmd[6] = test_size(x, y)
+	mbench = subprocess.check_output(cmd)
+	result = mbench.splitlines()[1].split()
+	#print result[4]
+	print result[1:]
 
 def main():
-	memcpy_test(5)
-	memcpy_test(6)
-	memcpy_test(7)
-	memcpy_test(8)
-	memcpy_test(9)
-	memcpy_test(10)
-	memcpy_test(11)
-	memcpy_test(12)
-	memcpy_test(13)
-	memcpy_test(14)
-	memcpy_test(15)
-	memcpy_test(16)
-	memcpy_test(17)
-	memcpy_test(18)
-	memcpy_test(19)
-	memcpy_test(20)
-	memcpy_test(21)
-	memcpy_test(22)
-	memcpy_test(23)
+	test_memcpy(5,0)
+	test_memcpy(6)
+	test_memcpy(7)
+	test_memcpy(8)
+	test_memcpy(9)
+	test_memcpy(10)
+	test_memcpy(11)
+	test_memcpy(12)
+	test_memcpy(13)
+	test_memcpy(14)
+	test_memcpy(15)
+	test_memcpy(16)
+	test_memcpy(17)
+	test_memcpy(18)
+	test_memcpy(19)
+	test_memcpy(20)
+	test_memcpy(21)
+	test_memcpy(22)
+	test_memcpy(23)
 
 if __name__ == '__main__':
 	main()
