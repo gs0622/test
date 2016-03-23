@@ -5,9 +5,9 @@ import subprocess
 import argparse
 
 def main():
-	parser = argparse.ArgumentParser(description='grep "hello" string remotely')
-	parser.add_argument('--remote', dest='remote', type=str, default='10.5.232.37', help='rermote IP address')
-	parser.add_argument('--loops', dest='loops', type=int, default=11, help='iterator loops')
+	parser = argparse.ArgumentParser(description='grep "hello" string via remote ssh')
+	parser.add_argument('--remote', dest='remote', type=str, metavar='IP', default='10.5.232.37', help='rermote IP address')
+	parser.add_argument('--loops', dest='loops', type=int, default=10, help='iterator loops')
 	args = parser.parse_args()
 	print args
 
