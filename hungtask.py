@@ -1,10 +1,23 @@
 #!/usr/bin/python
+import os
+import sys
 import time
 import datetime
 import subprocess
 import argparse
 
 def main():
+	fnull = open(os.devnull,"w")
+	ret = subprocess.call(["which", "sshpass"], stdout=fnull, stderr=subprocess.STDOUT)
+	if ret == 1:
+		print "'sshpass' is required."
+		sys.exit(0)
+	ret = subprocess.call(["which", "ssh"], stdout=fnull, stderr=subprocess.STDOUT)
+	if ret == 1:
+		print "'openssh-client' is required."
+		sys.exit(0)
+	fnull.close()
+
 	parser = argparse.ArgumentParser(description='perform "HUNG_TASK" test via remote ssh')
 	parser.add_argument('--remote', dest='remote', type=str, metavar='IP', default='10.5.232.37', help='rermote IP address')
 	parser.add_argument('--loops', dest='loops', type=int, default=10, help='iterator loops')
