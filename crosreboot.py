@@ -12,16 +12,16 @@ def main():
 	args = parser.parse_args()
 	print args
 
-	prefix = ['sshpass', '-p', 'test0000', 'ssh',
-		'-oStrictHostKeyChecking=no', '-oConnectTimeout=10',
-		'-oServerAliveInterval=10' ]
+	prefix = ['sshpass', '-p', 'test0000', 'ssh', '-q',
+		'-oStrictHostKeyChecking=no', '-oUserKnownHostsFile=/dev/null',
+		'-oConnectTimeout=10', '-oServerAliveInterval=10' ]
 	cmd0 = ['reboot; exit']
 	prefix.append("root@" + args.remote)
 
 	for i in range(args.loops):
 		try:
 			now = str(datetime.datetime.fromtimestamp(time.time()))
-			print now, ": ", ": cmd0: ", cmd0
+			print now, ": ", str(i).rjust(4), ":  cmd0: ", cmd0
 			subprocess.call(prefix + cmd0)
 
 			now = str(datetime.datetime.fromtimestamp(time.time()))
@@ -30,7 +30,7 @@ def main():
 
 		except subprocess.CalledProcessError as err:
 			now = str(datetime.datetime.fromtimestamp(time.time()))
-			print now, ": ", str(i).rjust(4), ": error code: ", err.returncode
+			print now, ": ", str(i).rjust(4), ": error: ", err.returncode
 			break;
 
 if __name__ == '__main__':
