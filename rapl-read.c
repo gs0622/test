@@ -126,7 +126,11 @@ static long long read_msr(int fd, int which) {
 #define CPU_BROADWELL		61	// 71 too?
 #define CPU_BROADWELL_EP	79
 #define CPU_BROADWELL_DE	86
-#define CPU_SKYLAKE		78	// 94 too?
+#define CPU_SKYLAKE_M		78	// Skylake Mobile
+#define CPU_SKYLAKE_D		94	// Skylake Desktop
+#define CPU_BAYTRAIL		55	// Baytrail (Silvermont)
+#define CPU_BRASWELL		76	// Braswell/CherryTrial (Airmont)
+#define CPU_GOLDMONT		92	// Apollo Lake (Goldmont)
 
 
 static int detect_cpu(void) {
@@ -193,8 +197,18 @@ static int detect_cpu(void) {
 		case CPU_BROADWELL:
 			printf("Broadwell");
 			break;
-		case CPU_SKYLAKE:
+		case CPU_SKYLAKE_M:
+		case CPU_SKYLAKE_D:
 			printf("Skylake");
+			break;
+		case CPU_BAYTRAIL:
+			printf("Baytrail");
+			break;
+		case CPU_BRASWELL:
+			printf("Braswell");
+			break;
+		case CPU_GOLDMONT:
+			printf("Apollo Lake");
 			break;
 		default:
 			printf("Unsupported model %d\n",model);
@@ -249,6 +263,7 @@ static int detect_packages(void) {
 	return 0;
 }
 
+static int slp = 1; /*1s*/
 
 /*******************************/
 /* MSR code                    */
@@ -299,16 +314,18 @@ static int rapl_msr(int core, int cpu_model) {
 		printf("\t\tTime units = %.8fs\n",time_units);
 		printf("\n");
 
-		/* Show package power info */
-		result=read_msr(fd,MSR_PKG_POWER_INFO);
-		thermal_spec_power=power_units*(double)(result&0x7fff);
-		printf("\t\tPackage thermal spec: %.3fW\n",thermal_spec_power);
-		minimum_power=power_units*(double)((result>>16)&0x7fff);
-		printf("\t\tPackage minimum power: %.3fW\n",minimum_power);
-		maximum_power=power_units*(double)((result>>32)&0x7fff);
-		printf("\t\tPackage maximum power: %.3fW\n",maximum_power);
-		time_window=time_units*(double)((result>>48)&0x7fff);
-		printf("\t\tPackage maximum time window: %.6fs\n",time_window);
+		if (cpu_model!=CPU_BAYTRIAL && cpu_model!=CPU_BRASWELL) {
+			/* Show package power info */
+			result=read_msr(fd,MSR_PKG_POWER_INFO);
+			thermal_spec_power=power_units*(double)(result&0x7fff);
+			printf("\t\tPackage thermal spec: %.3fW\n",thermal_spec_power);
+			minimum_power=power_units*(double)((result>>16)&0x7fff);
+			printf("\t\tPackage minimum power: %.3fW\n",minimum_power);
+			maximum_power=power_units*(double)((result>>32)&0x7fff);
+			printf("\t\tPackage maximum power: %.3fW\n",maximum_power);
+			time_window=time_units*(double)((result>>48)&0x7fff);
+			printf("\t\tPackage maximum time window: %.6fs\n",time_window);
+		}
 
 		/* Show package power limit */
 		result=read_msr(fd,MSR_PKG_RAPL_POWER_LIMIT);
@@ -397,8 +414,8 @@ static int rapl_msr(int core, int cpu_model) {
 		close(fd);
 	}
 
-  	printf("\n\tSleeping 1 second\n\n");
-	sleep(1);
+  	printf("\n\tSleeping %d second\n\n", slp);
+	sleep(slp);
 
 	for(j=0;j<total_packages;j++) {
 
@@ -576,8 +593,8 @@ static int rapl_perf(int core) {
 		}
 	}
 
-	printf("\n\tSleeping 1 second\n\n");
-	sleep(1);
+	printf("\n\tSleeping %d second\n\n", slp);
+	sleep(slp);
 
 	for(j=0;j<total_packages;j++) {
 		printf("\tPackage %d:\n",j);
@@ -672,8 +689,8 @@ static int rapl_sysfs(int core) {
 		}
 	}
 
-	printf("\tSleeping 1 second\n\n");
-	sleep(1);
+	printf("\tSleeping %d second\n\n", slp);
+	sleep(slp);
 
 	/* Gather after values */
 	for(j=0;j<total_packages;j++) {
@@ -719,14 +736,18 @@ int main(int argc, char **argv) {
 
 	opterr=0;
 
-	while ((c = getopt (argc, argv, "c:hmps")) != -1) {
+	while ((c = getopt (argc, argv, "ct:hmps")) != -1) {
 		switch (c) {
 		case 'c':
 			core = atoi(optarg);
 			break;
+		case 't':
+			slp = atoi(optarg);
+			break;
 		case 'h':
 			printf("Usage: %s [-c core] [-h] [-m]\n\n",argv[0]);
 			printf("\t-c core : specifies which core to measure\n");
+			printf("\t-t secs : specifies time in seconds to measure\n");
 			printf("\t-h      : displays this help\n");
 			printf("\t-m      : forces use of MSR mode\n");
 			printf("\t-p      : forces use of perf_event mode\n");
