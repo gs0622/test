@@ -40,7 +40,7 @@ def main():
 	cmd1.append(cmds)
 
 	cmd2 = ['sync; reboot']
-	cmd3 = ['generate_logs']
+	cmd3 = ['iotools mmio_dump 0xc1100480 0x110 2>&1 | tee /var/log/mmio_dump.log; generate_logs']
 	cmd4 = ['rm -rf /var/log/*']
 
 	prefix.append("root@" + args.remote)
