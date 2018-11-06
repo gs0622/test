@@ -16,13 +16,13 @@ def main():
 	if ret == 1:
 		print "'openssh-client' is required."
 		sys.exit(0)
-	fnull.close()
 
 	parser = argparse.ArgumentParser(description='cold reboto stress out USB enumeration via remote ssh')
-	parser.add_argument('--remote', dest='remote', type=str, metavar='IP', default='10.5.232.37', help='rermote IP address')
-	parser.add_argument('--loops', dest='loops', type=int, default=10, help='iterator loops')
-	parser.add_argument('--sleep', dest='sleep', type=int, default=30, help='sleep seconds per test')
+	parser.add_argument('--clean', dest='clean', type=bool, default=False, help='clean up log after test')
 	parser.add_argument('--devices', dest='devices', type=str, default='0bda:8153', help='USB VID:PID')
+	parser.add_argument('--loops', dest='loops', type=int, default=10, help='iterator loops')
+	parser.add_argument('--remote', dest='remote', type=str, metavar='IP', default='10.5.232.37', help='rermote IP address')
+	parser.add_argument('--sleep', dest='sleep', type=int, default=30, help='sleep seconds per test')
 	args = parser.parse_args()
 	print args
 
@@ -41,6 +41,7 @@ def main():
 
 	cmd2 = ['sync; reboot']
 	cmd3 = ['generate_logs']
+	cmd4 = ['rm -rf /var/log/*']
 
 	prefix.append("root@" + args.remote)
 
@@ -75,6 +76,13 @@ def main():
 			now = str(datetime.datetime.fromtimestamp(time.time()))
 			print now, ": ", str(i).rjust(3), ": error code: ", err.returncode
 			break;
+
+        if (args.clean == True):
+                now = str(datetime.datetime.fromtimestamp(time.time()))
+                ret = subprocess.call(prefix + cmd4, stdout=fnull)
+                print now, ": ", str(i).rjust(3), ": cmd: ", cmd4, ": ret:", ret
+
+	fnull.close()
 
 if __name__ == '__main__':
 	main()
